@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Real Estate Trends</title>
+    <!-- Leaflet CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
+    integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
+    crossorigin=""/>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <!-- Our CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+
+<body>
+    <div class="jumbotron vertical-center">
+        <div class="container text-center" id="landing">
+            <br>
+            <h2>Historical Real Estate Trends</h2>
+            <br>
+        </div>
+        <!-- sidenav from https://www.w3schools.com/howto/howto_js_sidenav.asp -->
+        <span id="sidenav-icon" onclick="openNav()">
+            <div></div>
+            <div></div>
+            <div></div>
+        </span>
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="/">Home</a>
+            <a href="/past">Past</a>
+            <a href="/present">Present</a>
+            <a href="/future">Future</a>
+            <!-- Toggle switch -->
+            <br>
+            <div class="custom-control custom-switch">
+                <input type="checkbox" class="custom-control-input" id="customSwitches" onclick="changeColor()">
+                <label class="custom-control-label" for="customSwitches">Colour-blind mode</label>
+            </div>
+        </div>
+    </div>
+    <div id="main">
+        <p id="heading">The following represents some major trends in property prices in Melbourne over the past 10 years, 
+            based off sold listing data from <a href="https://www.domain.com.au/" target="_blank">Domain</a>.
+        </p>
+        <div class="container">
+            <div class="row">
+                <div class="col-12">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuListingType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            House
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">Apartment/Unit/Flat</button>
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">House</button>
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">Townhouse</button>
+                        </div>
+                    </div> &nbsp;&nbsp;prices by &nbsp;&nbsp;
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuRegion" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Suburb
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <button class="dropdown-item" type="button" onclick="optionRegion(this)">Suburb</button>
+                            <button class="dropdown-item" type="button" onclick="optionRegion(this)">LGA</button>
+                        </div>
+                        &nbsp;&nbsp; in year <span class="year">2020</span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-7 col-md-7 .d-block" id="leftMap">
+                    <p class="progressTop"><br></p>
+                    <!-- progress bar for years -->
+                    <div id="progress" class="progress"></div>  
+                    <div id="map"></div>
+                    <br>
+                    <p class="footnote">Mortality rate = deaths per 1,000 population.
+                        <br>Birth rate = births per 1,000 population.
+                    </p>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    <div id = "violin"></div>
+                    <!-- legend for violin plot colors -->
+                    <div class="legend">
+                        <strong>Crime Rate (per 100,000 population)</strong>
+                            <div class="min">2,900</div>
+                            <div class="max">300,000</div>
+                        <div id="violincolor" class="violincolor"></div>
+                    </div>
+                    <hr>
+                    <div id = "bar"></div>
+                </div>
+            </div>
+        </div>
+        <div class="row" id="footer">
+            <div class="container text-center">
+                <p><a href="https://population.un.org/wpp/" target="_blank"> Data sourced from United Nations, Department of Economic and Social Affairs, Population Division (2019). World Population Prospects 2019, Online Edition. Rev. 1.</a></p>
+            </div>
+        </div>
+    </div>
+    <!-- Leaflet JavaScript -->
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
+    integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
+    crossorigin=""></script>
+    <!-- D3 JavaScript -->
+    <script src="https://d3js.org/d3.v6.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
+    <!-- Plotly JavaScript -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- our JavaScript -->
+    <script type="text/javascript" src="{{ url_for('static', filename='js/tech.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/config.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/logic.js') }}"></script>
+    <script src="{{ url_for('static', filename='data/LGA.geojson') }}"></script>
+</body>
+</html>

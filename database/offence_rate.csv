@@ -1,0 +1,364 @@
+year,lga,crime_rate
+2011,Banyule,5343
+2011,Bass Coast,6721
+2011,Baw Baw,4489
+2011,Bayside,3428
+2011,Boroondara,3469
+2011,Brimbank,8650
+2011,Cardinia,5363
+2011,Casey,5370
+2011,Darebin,7710
+2011,Glen Eira,3823
+2011,Greater Dandenong,9473
+2011,Greater Geelong,6795
+2011,Hobsons Bay,6252
+2011,Hume,7484
+2011,Kingston,6094
+2011,Knox,5058
+2011,Macedon Ranges,3686
+2011,Manningham,3036
+2011,Maribyrnong,11127
+2011,Maroondah,5574
+2011,Melbourne,29537
+2011,Melton,5837
+2011,Mitchell,8107
+2011,Monash,4446
+2011,Moonee Valley,6371
+2011,Moorabool,4509
+2011,Moreland,6759
+2011,Murrindindi,4349
+2011,Nillumbik,3005
+2011,Port Phillip,10138
+2011,Stonnington,8307
+2011,Whitehorse,3988
+2011,Whittlesea,6022
+2011,Wyndham,6350
+2011,Yarra,13748
+2011,Yarra Ranges,4159
+2012,Banyule,5890
+2012,Bass Coast,6715
+2012,Baw Baw,5671
+2012,Bayside,4481
+2012,Boroondara,3820
+2012,Brimbank,8952
+2012,Cardinia,5801
+2012,Casey,5345
+2012,Darebin,8163
+2012,Glen Eira,4082
+2012,Greater Dandenong,9912
+2012,Greater Geelong,6902
+2012,Hobsons Bay,7273
+2012,Hume,8262
+2012,Kingston,5973
+2012,Knox,5410
+2012,Macedon Ranges,3342
+2012,Manningham,3510
+2012,Maribyrnong,11850
+2012,Maroondah,6053
+2012,Melbourne,29396
+2012,Melton,6978
+2012,Mitchell,6571
+2012,Monash,4526
+2012,Moonee Valley,6867
+2012,Moorabool,4910
+2012,Moreland,7439
+2012,Murrindindi,4451
+2012,Nillumbik,2923
+2012,Port Phillip,11318
+2012,Stonnington,8615
+2012,Whitehorse,3940
+2012,Whittlesea,6866
+2012,Wyndham,6971
+2012,Yarra,13467
+2012,Yarra Ranges,4234
+2013,Banyule,6046
+2013,Bass Coast,7114
+2013,Baw Baw,6802
+2013,Bayside,4241
+2013,Boroondara,3975
+2013,Brimbank,9620
+2013,Cardinia,6286
+2013,Casey,5563
+2013,Darebin,7556
+2013,Glen Eira,4106
+2013,Greater Dandenong,10439
+2013,Greater Geelong,7315
+2013,Hobsons Bay,7751
+2013,Hume,8154
+2013,Kingston,5944
+2013,Knox,5615
+2013,Macedon Ranges,3821
+2013,Manningham,2982
+2013,Maribyrnong,10400
+2013,Maroondah,5756
+2013,Melbourne,28849
+2013,Melton,6754
+2013,Mitchell,6631
+2013,Monash,4639
+2013,Moonee Valley,6971
+2013,Moorabool,5856
+2013,Moreland,7354
+2013,Murrindindi,4659
+2013,Nillumbik,3047
+2013,Port Phillip,11176
+2013,Stonnington,8677
+2013,Whitehorse,4476
+2013,Whittlesea,6652
+2013,Wyndham,6348
+2013,Yarra,12654
+2013,Yarra Ranges,4168
+2014,Banyule,7897
+2014,Bass Coast,8612
+2014,Baw Baw,7437
+2014,Bayside,4267
+2014,Boroondara,4249
+2014,Brimbank,9155
+2014,Cardinia,6665
+2014,Casey,5607
+2014,Darebin,9144
+2014,Glen Eira,3923
+2014,Greater Dandenong,10419
+2014,Greater Geelong,7511
+2014,Hobsons Bay,7634
+2014,Hume,8688
+2014,Kingston,6211
+2014,Knox,6153
+2014,Macedon Ranges,4240
+2014,Manningham,3510
+2014,Maribyrnong,10530
+2014,Maroondah,6585
+2014,Melbourne,24779
+2014,Melton,7338
+2014,Mitchell,8287
+2014,Monash,4741
+2014,Moonee Valley,7067
+2014,Moorabool,5771
+2014,Moreland,7546
+2014,Murrindindi,5041
+2014,Nillumbik,3335
+2014,Port Phillip,10840
+2014,Stonnington,9089
+2014,Whitehorse,4488
+2014,Whittlesea,7477
+2014,Wyndham,6503
+2014,Yarra,14096
+2014,Yarra Ranges,4674
+2015,Banyule,7099
+2015,Bass Coast,7987
+2015,Baw Baw,7492
+2015,Bayside,4232
+2015,Boroondara,3767
+2015,Brimbank,9037
+2015,Cardinia,6866
+2015,Casey,6493
+2015,Darebin,9473
+2015,Glen Eira,3965
+2015,Greater Dandenong,11095
+2015,Greater Geelong,8224
+2015,Hobsons Bay,7389
+2015,Hume,9555
+2015,Kingston,6551
+2015,Knox,6145
+2015,Macedon Ranges,4627
+2015,Manningham,3580
+2015,Maribyrnong,9327
+2015,Maroondah,6910
+2015,Melbourne,25225
+2015,Melton,7523
+2015,Mitchell,9149
+2015,Monash,4974
+2015,Moonee Valley,7513
+2015,Moorabool,6428
+2015,Moreland,7700
+2015,Murrindindi,4628
+2015,Nillumbik,3517
+2015,Port Phillip,11265
+2015,South Gippsland,4277
+2015,Stonnington,9068
+2015,Whitehorse,4500
+2015,Whittlesea,6599
+2015,Wyndham,6054
+2015,Yarra,14088
+2015,Yarra Ranges,4609
+2016,Banyule,7866
+2016,Bass Coast,9060
+2016,Baw Baw,8388
+2016,Bayside,4932
+2016,Boroondara,4548
+2016,Brimbank,9601
+2016,Cardinia,7852
+2016,Casey,7280
+2016,Darebin,10689
+2016,Glen Eira,4618
+2016,Greater Dandenong,12882
+2016,Greater Geelong,9687
+2016,Hobsons Bay,7488
+2016,Hume,10920
+2016,Kingston,7108
+2016,Knox,6653
+2016,Macedon Ranges,5035
+2016,Manningham,3664
+2016,Maribyrnong,10701
+2016,Maroondah,7462
+2016,Melbourne,24751
+2016,Melton,8611
+2016,Mitchell,10486
+2016,Monash,6349
+2016,Moonee Valley,7557
+2016,Moorabool,7103
+2016,Moreland,8556
+2016,Murrindindi,5230
+2016,Nillumbik,5396
+2016,Port Phillip,11858
+2016,Stonnington,9668
+2016,Whitehorse,4843
+2016,Whittlesea,7485
+2016,Wyndham,6921
+2016,Yarra,14894
+2016,Yarra Ranges,5692
+2017,Banyule,7480
+2017,Bass Coast,7697
+2017,Baw Baw,7638
+2017,Bayside,4948
+2017,Boroondara,4647
+2017,Brimbank,8629
+2017,Cardinia,6450
+2017,Casey,7191
+2017,Darebin,10302
+2017,Glen Eira,4973
+2017,Greater Dandenong,12169
+2017,Greater Geelong,9226
+2017,Hobsons Bay,6649
+2017,Hume,10182
+2017,Kingston,7004
+2017,Knox,7481
+2017,Macedon Ranges,4588
+2017,Manningham,4179
+2017,Maribyrnong,9720
+2017,Maroondah,7672
+2017,Melbourne,23208
+2017,Melton,7500
+2017,Mitchell,10679
+2017,Monash,5951
+2017,Moonee Valley,7520
+2017,Moorabool,7514
+2017,Moreland,7863
+2017,Murrindindi,4714
+2017,Nillumbik,4246
+2017,Port Phillip,12308
+2017,Stonnington,9521
+2017,Whitehorse,4931
+2017,Whittlesea,7473
+2017,Wyndham,6110
+2017,Yarra,13990
+2017,Yarra Ranges,5444
+2018,Banyule,7438
+2018,Bass Coast,6142
+2018,Baw Baw,7840
+2018,Bayside,4508
+2018,Boroondara,3777
+2018,Brimbank,8826
+2018,Cardinia,5448
+2018,Casey,5923
+2018,Darebin,9079
+2018,Glen Eira,4254
+2018,Greater Dandenong,11049
+2018,Greater Geelong,8564
+2018,Hobsons Bay,6247
+2018,Hume,9008
+2018,Kingston,6440
+2018,Knox,6955
+2018,Macedon Ranges,4246
+2018,Manningham,3750
+2018,Maribyrnong,9076
+2018,Maroondah,6769
+2018,Melbourne,22016
+2018,Melton,6879
+2018,Mitchell,9934
+2018,Monash,5358
+2018,Moonee Valley,6908
+2018,Moorabool,6722
+2018,Moreland,7524
+2018,Murrindindi,5049
+2018,Nillumbik,3379
+2018,Port Phillip,11362
+2018,Stonnington,9073
+2018,Whitehorse,4613
+2018,Whittlesea,6897
+2018,Wyndham,5496
+2018,Yarra,13988
+2018,Yarra Ranges,4978
+2019,Banyule,6963
+2019,Bass Coast,6740
+2019,Baw Baw,8835
+2019,Bayside,4532
+2019,Boroondara,3966
+2019,Brimbank,8940
+2019,Cardinia,5716
+2019,Casey,6077
+2019,Darebin,8868
+2019,Glen Eira,4269
+2019,Greater Dandenong,10769
+2019,Greater Geelong,8006
+2019,Hobsons Bay,6408
+2019,Hume,9021
+2019,Kingston,7010
+2019,Knox,6713
+2019,Macedon Ranges,4969
+2019,Manningham,3700
+2019,Maribyrnong,8855
+2019,Maroondah,6956
+2019,Melbourne,19131
+2019,Melton,6831
+2019,Mitchell,9815
+2019,Monash,5200
+2019,Moonee Valley,6060
+2019,Moorabool,6339
+2019,Moreland,7671
+2019,Murrindindi,5065
+2019,Nillumbik,3301
+2019,Port Phillip,10676
+2019,South Gippsland,5291
+2019,Stonnington,8943
+2019,Whitehorse,4798
+2019,Whittlesea,6966
+2019,Wyndham,5666
+2019,Yarra,12983
+2019,Yarra Ranges,5323
+2020,Banyule,7327
+2020,Bass Coast,7000
+2020,Baw Baw,8781
+2020,Bayside,5000
+2020,Boroondara,4773
+2020,Brimbank,9629
+2020,Cardinia,6184
+2020,Casey,6465
+2020,Darebin,9144
+2020,Glen Eira,5054
+2020,Greater Dandenong,11142
+2020,Greater Geelong,8628
+2020,Hobsons Bay,6186
+2020,Hume,8917
+2020,Kingston,7237
+2020,Knox,7330
+2020,Macedon Ranges,4802
+2020,Manningham,3675
+2020,Maribyrnong,9815
+2020,Maroondah,6688
+2020,Melbourne,19054
+2020,Melton,7778
+2020,Mitchell,9787
+2020,Monash,5934
+2020,Moonee Valley,6521
+2020,Moorabool,6167
+2020,Moreland,7607
+2020,Murrindindi,5716
+2020,Nillumbik,3476
+2020,Port Phillip,11116
+2020,South Gippsland,5541
+2020,Stonnington,10227
+2020,Whitehorse,5193
+2020,Whittlesea,6986
+2020,Wyndham,6188
+2020,Yarra,13715
+2020,Yarra Ranges,5452
