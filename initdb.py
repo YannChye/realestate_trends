@@ -2,10 +2,27 @@
 import os
 import pandas as pd
 import sys
-sys.path.append('./config')
-from password import username, password
 from sqlalchemy import create_engine, inspect
 from sqlalchemy_utils import database_exists, create_database
+
+
+## IF RUNNING ON HEROKU, run the following line to create engine
+## replace 'heroku_postgres_uri' with heroku's postgres uri
+########################################################
+engine = create_engine('postgres://ppqnvqkepqslwn:a0d43894e607c6900372526eb98d2feb04c945a290d58e9b14f144b560826586@ec2-3-214-4-151.compute-1.amazonaws.com:5432/d11tjdfkkq3p3o')
+
+########################################################
+
+## IF RUNNING LOCALLY, run the following lines
+## ensure that you have your local postgres username and possword stored in ./00_config/password.py
+########################################################
+# sys.path.append('./00_config')
+# from password import username, password
+# engine = create_engine('postgresql://'+username+':'+password+'@localhost/realestate')
+# if not database_exists(engine.url):
+#    create_database(engine.url)
+
+########################################################
 
 # import csv data
 building=pd.read_csv(os.path.join('database','building.csv'))
@@ -14,11 +31,6 @@ listing=pd.read_csv(os.path.join('database','listing.csv'))
 offence_rate=pd.read_csv(os.path.join('database','offence_rate.csv'))
 suburb=pd.read_csv(os.path.join('database','suburb.csv'))
 year=pd.read_csv(os.path.join('database','year.csv'))
-
-# create engine and database
-engine = create_engine('postgresql://'+username+':'+password+'@localhost/realestate')
-if not database_exists(engine.url):
-    create_database(engine.url)
 
 #drop table if exists
 engine.execute("DROP TABLE IF EXISTS listing")
@@ -74,6 +86,7 @@ engine.execute("CREATE TABLE listing (\
                 REFERENCES suburb(suburb),\
                 FOREIGN KEY (year)\
                 REFERENCES year(year))")
+                
 # save data into SQL database
 year.to_sql(name='year', con=engine, if_exists='append', index=False)
 lga.to_sql(name='lga', con=engine, if_exists='append', index=False)
