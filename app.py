@@ -13,6 +13,7 @@ from sqlalchemy.sql import text
 import pandas as pd
 import numpy as np
 import joblib
+import json
 
 #################################################
 # Flask Setup
@@ -60,7 +61,13 @@ def present():
 @app.route("/future")
 def tech():
     return render_template("future.html")
-    
+
+@app.route("/lga")
+def geog():
+    with open('./static/data/LGA.csv') as csv_file:
+        data=csv_file.read()
+    return data
+
 @app.route('/predict',methods=['POST'])
 def predict():
     proptype = request.form['type']

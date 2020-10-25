@@ -2,8 +2,7 @@
 /* Set the width of the side navigation to 250px */
 function openNav() {
     document.getElementById("mySidenav").style.width = "250px";
-  }
-
+}
 /* Set the width of the side navigation to 0 */
 function closeNav() {
     document.getElementById("mySidenav").style.width = "0";
@@ -11,7 +10,7 @@ function closeNav() {
 
 // Victoria boundary polygons
 const subCoord="https://data.gov.au/geoserver/vic-suburb-locality-boundaries-psma-administrative-boundaries/wfs?request=GetFeature&typeName=ckan_af33dd8c_0534_4e18_9245_fc64440f742e&outputFormat=json"
-const lgaCoord="LGA.geojson"
+const lgaCoord="/lga"
 
 // Select a listing type
 function optionListingType(variable) {
@@ -63,7 +62,6 @@ L.tileLayer("https://api.mapbox.com/styles/v1/mapbox/{id}/tiles/{z}/{x}/{y}?acce
 function buildMap(coord,mapdata) {
     d3.json(coord).then(function(coorddata) {
         var coordinates=coorddata.features;
-        console.log(coordinates[0].properties.abb_name.toLowerCase())
         for (i=0;i<coordinates.length;i++) {
           for (j=0;j<mapdata.length;j++) {
             if (region==="suburb") {
@@ -72,7 +70,7 @@ function buildMap(coord,mapdata) {
             }
             else if (region==="lga") {
                 var mapReg=mapdata[j].lga.toLowerCase();
-                var coordReg=coordinates[i].properties.abb_name.toLowerCase();
+                var coordReg=coordinates[i].properties.ABB_NAME.toLowerCase();
             }
             if (mapReg==coordReg) {
                 coordinates[i].properties.price=mapdata[j].price;
@@ -101,21 +99,22 @@ function buildMap(coord,mapdata) {
                                 lineChart(e.sourceTarget.feature.properties.vic_loca_2.toLowerCase());
                             }
                             else if (region==="lga") {
-                                lineChart(e.sourceTarget.feature.properties.abb_name.toLowerCase());
+                                lineChart(e.sourceTarget.feature.properties.ABB_NAME.toLowerCase());
                             }
                         })
                     }
                 }).bindPopup(
-                    "<b>"+(region==="suburb"?feature.properties.vic_loca_2.split(' ').map(capitalize).join(' ')+"<br>":"")+
-                    "LGA: "+feature.properties.lga+"</b>"+"<hr>"+
-                    feature.properties.count+" "+listingType+" sold<br>"+
-                    "<b>average property:</b> "+feature.properties.bed+(feature.properties.bed===1?" bed ":" beds ")+
+                    (region==="suburb"?"<b>Suburb: </b>"+feature.properties.vic_loca_2.split(' ').map(capitalize).join(' ')+"<br>":"")+
+                    "<b>LGA</b>: "+feature.properties.lga+""+"<hr>"+
+                    "<b>Average price</b> - AUD"+feature.properties.price.toLocaleString()+"<br>"+
+                    "<b>Average property</b> - "+feature.properties.bed+(feature.properties.bed===1?" bed ":" beds ")+
                     feature.properties.bath+(feature.properties.bath===1?" bath ":" baths ")+
                     feature.properties.car+(feature.properties.car===1?" car ":" cars ")+"<br>"+
-                    "<b>average price:</b> AUD"+feature.properties.price.toLocaleString()+"<br>"+
                     Math.round(feature.properties.auction/feature.properties.count*100)+"% sold at auction<br>"+
                     Math.round(feature.properties.auctionprior/feature.properties.count*100)+"% sold prior to auction<br>"+
-                    Math.round(feature.properties.private/feature.properties.count*100)+"% sold via private treaty")
+                    Math.round(feature.properties.private/feature.properties.count*100)+"% sold via private treaty<br>"+
+                    "Recorded crime per 100,000 population - "+feature.properties.offence+"<br><br>"+
+                    "<i>*based on averages from "+feature.properties.count+" sold listings</i>")
                 .addTo(myMap)
             }}
         }
@@ -183,11 +182,10 @@ function makeYears(years) {
         .on("click",function(d) {
             let selectyear=d.path[0].innerHTML;
             d3.select(".year").text(selectyear)
-            d3.selectAll("rect").attr("fill",colors[5])
+            d3.select(".progress").selectAll("rect").attr("fill",colors[5])
             d3.select(this).attr("fill",colors[0])
             myMap.closePopup(); //close map popup
-            getData(region,listingType,selectyear)
-            getCrimeRate(selectyear); // update dashboard with selected year
+            getData(region,listingType,selectyear)// update dashboard with selected year
             return year=selectyear;
         })
         .on("mouseover",function(d) {
@@ -346,9 +344,11 @@ function violinChart(year,style) {
         }]
         var layout = {
             autosize:true,
+            plot_bgcolor:'rgb(239,225,210)',
+            paper_bgcolor:'rgb(239,225,210)',
             margin:{
-                l:50,
-                r:0,
+                l:100,
+                r:50,
                 b:50,
                 t:50,
                 pad:0
@@ -356,10 +356,15 @@ function violinChart(year,style) {
             hovermode:"closest",
             showlegend:false,
             font:{
-                family:'Times New Roman, Times, serif',
+                family:'Montserrat,sans-serif',
                 size:8
             },
-            title: listingType+" Price across LGAs",
+            title: {
+                "text":"<b>"+capitalize(listingType)+" Price across LGAs in "+year+"</b>",
+                "font":{
+                    "size":"24px"},
+
+            },
             xaxis: {
                 zeroline: false,
                 range: [0,5000000]
@@ -369,14 +374,15 @@ function violinChart(year,style) {
     })
 }
 
+// function to change color of the legend for the violin chart
 function violinColor(colors) {
-var svgViolin = d3.select(".violincolor").select("svg");
-if (!svgViolin.empty()) {
-    svgViolin.remove();
-}
-// set year SVG dimension
-var svgHeight=50;
-var svgWidth=$("#violin").width();
+    var svgViolin = d3.select(".violincolor").select("svg");
+    if (!svgViolin.empty()) {
+        svgViolin.remove();
+    }
+    // set year SVG dimension
+    var svgHeight=50;
+    var svgWidth=$("#violin").width();
     // create svg container
     var svg = d3.select(".violincolor").append("svg")
         .attr("height", svgHeight)
@@ -401,14 +407,14 @@ var svgWidth=$("#violin").width();
 
 // function to capitalise first letter in suburb
 function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.slice(1);
+    return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
 }
 
-
+// function for suburb trend plot
 function lineTrend() {
     var yearsAll=[]
     var priceAll=[]
-    d3.json("/api/trend").then(function(data) {
+    d3.json("/api/trend").then(function(data) { //overall average plot
         data.forEach(function(d) {
             yearsAll.push(d.year)
             priceAll.push(d.price)
@@ -434,14 +440,14 @@ function lineTrend() {
             },
             hovermode:"closest",
             title:{
-                "text":"Property Price Trend",
+                "text":"<b>Property Price Trend</b>",
                 "xanchor":"right",
                 "x":1,
                 "y":0.95,
                 "yanchor":"top"
             },
             font:{
-                family:'Times New Roman, Times, serif',
+                family:'Montserrat,sans-serif',
                 size:10
                 },
             xaxis:{title:{
@@ -477,14 +483,14 @@ function lineTrend() {
           }
         ]
       }
-      Plotly.newPlot("bar",[traceAll],layout);
+      Plotly.newPlot("line",[traceAll],layout);
     })
 }
 
 //suburb trend line chart
 function lineChart(suburb,listingType) {
     try {
-        Plotly.deleteTraces("bar",[1,2,3])
+        Plotly.deleteTraces("line",[1,2,3])
     }
     catch (e) {}
     let url="/api/"+suburb
@@ -540,7 +546,7 @@ function lineChart(suburb,listingType) {
         }
       }
       // base line plot
-      Plotly.addTraces("bar",[traceApartment,traceHouse,traceTownhouse]);
+      Plotly.addTraces("line",[traceApartment,traceHouse,traceTownhouse]);
     })
   }
 
