@@ -1,10 +1,17 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Real Estate Trends</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="description" content="Exploring the Melbourne property market" />
+    <title>LANDED</title>
+    <!-- icon from https://icon-icons.com/icon/Map-Location-house-home-marker/84564 -->
+    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='assets/img/home_icon.ico') }}">
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Varela+Round" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet" />
     <!-- Leaflet CSS -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css"
     integrity="sha512-xodZBNTC5n17Xt2atTPuE1HxjVMSvLVW9ocqUKLsCC5CXdbqCmblAshOMAS6/keqq/sMZMZ19scR4PsZChSR7A=="
@@ -15,15 +22,235 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 
-<body>
-    <div class="jumbotron vertical-center">
-        <div class="container text-center">
-            <br>
-            <h2>House Hunting in Melbourne?</h2>
+<body id="page-top">
+    <!-- Navigation-->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top" id="mainNav">
+        <div class="container">
+            <a class="navbar-brand js-scroll-trigger" href="#page-top">LANDED</a>
+            <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav ml-auto">
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#past">Past</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#present">Present</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#future">Future</a></li>
+                </ul>
+            </div>
         </div>
-    </div>
-    <img src="{{ url_for('static', filename='images/splash.png') }}"> 
-    <p id="welcome"><a href="/past">WELCOME</a></p>                   
+    </nav>
+    <!-- Masthead-->
+    <header class="masthead">
+        <div class="container d-flex h-100 align-items-center">
+            <div class="mx-auto text-center">
+                <h1 class="mx-auto my-0 text-uppercase">LANDED</h1>
+                <h2 class="text-white-50 mx-auto mt-2 mb-5">Exploring the Melbourne Property Market</h2>
+                <a class="btn btn-primary js-scroll-trigger" href="#past">Explore</a>
+            </div>
+        </div>
+    </header>
+    <!-- Past -->
+    <section class="past-section text-center" id="past">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto">
+                    <h2 class="text-white mb-4">10-Year Trends</h2>
+                    <p class="text-white-50">
+                        Housing prices in Melbourne has risen over 20% in the past decade. While this 
+                        might present a bleak prospect for prospective first-home buyers vying for their 
+                        dream home, it is worth considering regional trends across the various melbourne 
+                        suburbs, to find one's pocket of perfection. The data presented here are based 
+                        off sold listings from <a href="https://www.domain.com.au/" target="_blank">Domain</a>. 
+                        Click on a year to find out more.
+                    </p>
+                </div>
+            </div>
+            <p class="progressTop"><br></p>
+            <!-- progress bar for years -->
+            <div id="progress" class="progress"></div>  
+            <div class="row">
+                <div class="col-lg-7 col-md-7 .d-block mx-auto" id="leftMap">
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuListingType" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            House
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">Apartment/Unit/Flat</button>
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">House</button>
+                            <button class="dropdown-item" type="button" onclick="optionListingType(this)">Townhouse</button>
+                        </div>
+                    </div> &nbsp;&nbsp;prices by &nbsp;&nbsp;
+                    <div class="dropdown">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuRegion" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Suburb
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                            <button class="dropdown-item" type="button" onclick="optionRegion(this)">Suburb</button>
+                            <button class="dropdown-item" type="button" onclick="optionRegion(this)">LGA</button>
+                        </div>
+                        &nbsp;&nbsp; in year <span class="year">2020</span>
+                    </div>
+                    <div id="map"></div>
+                    <br>
+                </div>
+                <div class="col-lg-5 col-md-5 col-sm-12">
+                    <div id = "violin"></div>
+                    <!-- legend for violin plot colors -->
+                    <div class="legend-crime">
+                        <strong>Crime Rate<br>(per 100,000 population)</strong>
+                        <br>
+                            <div class="min">2,900</div>
+                            <div class="max">300,000</div>
+                        <div id="violincolor" class="violincolor"></div>
+                    </div>
+                </div>
+            </div>
+            <hr>
+            <div class="row">
+                <hr>
+                <p>The chart below shows property price trends across the past 10 years. Click on a region 
+                    in the map above to find out how it compares to the average price trend (in grey)
+                </p>
+                <div class="col-12">
+                    <div id = "line"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Present -->
+    <section class="present-section bg-light" id="present">
+        <div class="container">
+            <div class="row align-items-center no-gutters mb-4 mb-lg-5">
+                <div class="col-xl-2 col-lg-3">
+                    <div class="featured-text text-center text-lg-left">
+                        <h4>Price Predictors</h4>
+                        <p class="text-black-50 mb-0">Knowing what factors make a difference in property 
+                            price is the first step towards finding something 'just right'.</p>
+                    </div>
+                </div>
+                <div class="col-xl-10 col-lg-9">
+                    <!-- Tableau embed link-->
+                    <div class='tableauPlaceholder' id='viz1604214406215' style='position: relative'>
+                        <noscript>
+                            <a href='#'>
+                                <img alt=' ' src='https:&#47;&#47;public.tableau.com&#47;static&#47;images
+                                &#47;Re&#47;RealEstateTrends_16032694544650&#47;Story1&#47;1_rss.png' style='border: none' />
+                            </a>
+                        </noscript>
+                        <object class='tableauViz'  style='display:none;'>
+                            <param name='host_url' value='https%3A%2F%2Fpublic.tableau.com%2F' /> 
+                            <param name='embed_code_version' value='3' /> 
+                            <param name='site_root' value='' />
+                            <param name='name' value='RealEstateTrends_16032694544650&#47;Story1' />
+                            <param name='tabs' value='no' /><param name='toolbar' value='no' />
+                            <param name='static_image' value='https:&#47;&#47;public.tableau.com&#47;static&#47;
+                                images&#47;Re&#47;RealEstateTrends_16032694544650&#47;Story1&#47;1.png' /> 
+                            <param name='animate_transition' value='yes' />
+                            <param name='display_static_image' value='yes' />
+                            <param name='display_spinner' value='yes' />
+                            <param name='display_overlay' value='yes' />
+                            <param name='display_count' value='yes' />
+                            <param name='language' value='en-GB' />
+                        </object>
+                    </div>                
+                    <script type='text/javascript'>                    
+                        var divElement = document.getElementById('viz1604214406215');                    
+                        var vizElement = divElement.getElementsByTagName('object')[0];                    
+                        vizElement.style.width='100%';vizElement.style.height='900px';                    
+                        var scriptElement = document.createElement('script');                    
+                        scriptElement.src = 'https://public.tableau.com/javascripts/api/viz_v1.js';                    vizElement.parentNode.insertBefore(scriptElement, vizElement);                
+                    </script>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Future -->
+    <section class="future-section bg-black" id="future">
+        <div class="container">
+            <div class="row justify-content-center no-gutters mb-5 mb-lg-0">
+                <div class="col-lg-6">
+                    <!-- Main Input For Receiving Query to our ML -->
+                    <form id="form" autocomplete="off">
+                        <div class="form-group">
+                        <div class="autocomplete">
+                            <label for="suburb" class="suburb">SUBURB</label>
+                            <input id="suburb" type="text" name="suburb" placeholder="Suburb">
+                        </div>
+                        <br>
+                        <label for="type" class="type">TYPE&nbsp;</label>
+                        <select class="form-control" id="type" name="type">
+                            <option value="Apartment">Apartment/Unit/Flat</option>
+                            <option value="House">House</option>
+                            <option value="Townhouse">Townhouse</option>
+                        </select>
+                        <br>
+                        <label for="bed" class="bed">BED&nbsp;&nbsp;</label>
+                        <select class="form-control" id="bed" name="bed">
+                            <option value=1>1</option>
+                            <option value=2>2</option>
+                            <option value=3>3</option>
+                            <option value=4>4</option>
+                            <option value=5>5</option>
+                            <option value=6>6</option>
+                        </select>
+                        <br>
+                        <label for="bath" class="bath">BATH&nbsp;</label>
+                        <select class="form-control" id="bath" name="bath">
+                            <option value=1>1</option>
+                            <option value=2>2</option>
+                            <option value=3>3</option>
+                            <option value=4>4</option>
+                            <option value=5>5</option>
+                            <option value=6>6</option>
+                        </select>
+                        <br>
+                        <label for="car" class="car">CAR&nbsp;&nbsp;</label>
+                        <select class="form-control" id="car" name="car">
+                            <option value=0>0</option>
+                            <option value=1>1</option>
+                            <option value=2>2</option>
+                            <option value=3>3</option>
+                            <option value=4>4</option>
+                            <option value=5>5</option>
+                            <option value=6>6</option>
+                        </select>
+                        </div>
+                        <button id="filter-btn" type="button" class="btn btn-default" onclick=getPrediction()>Estimate Price</button>
+                    </form>
+                </div>
+                <div class="col-lg-6" >
+                    <div class="bg-black text-center h-100 project">
+                        <div class="d-flex h-100">
+                            <div class="prediction-text w-100 my-auto text-center text-lg-left"  id="prediction">
+                                <h4 class="text-white"></h4>
+                                <p class="mb-0 text-white-50"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact-->
+    <section class="contact-section bg-black">
+        <div class="container">
+            <div class="social d-flex justify-content-center">
+                <a class="mx-2" href="https://twitter.com/YannChye" target="_blank"><i class="fab fa-twitter"></i></a>
+                <a class="mx-2" href="mailto:yannying.chye@monash.edu" target="_blank"><i class="far fa-envelope"></i></a>
+                <a class="mx-2" href="https://github.com/YannChye" target="_blank"><i class="fab fa-github"></i></a>
+                <a class="mx-2" href="https://www.linkedin.com/in/yann-chye-01/" target="_blank"><i class="fab fa-linkedin-in"></i></a>
+            </div>
+        </div>
+    </section>
+    <!-- footer -->
+    <footer class="footer bg-black small text-center text-white-50"><div class="container">Copyright © Yann Chye 2020</div></footer>             
+    <!-- Bootstrap core JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+    <!-- Third party plugin JS-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+    <!-- Core theme JS-->
+    <script src="{{ url_for('static', filename='js/theme.js') }}"></script>
     <!-- Leaflet JavaScript -->
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"
     integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA=="
@@ -35,10 +262,11 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3-tip/0.7.1/d3-tip.min.js"></script>
     <!-- Plotly JavaScript -->
     <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
-    <!-- Bootstrap JavaScript -->
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <!-- Ajax -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <!-- our JavaScript -->
     <script type="text/javascript" src="{{ url_for('static', filename='js/config.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='js/logic.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='js/future.js') }}"></script>
 </body>
 </html>

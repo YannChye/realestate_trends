@@ -19,7 +19,7 @@ import json
 # Flask Setup
 #################################################
 app = Flask(__name__)
-model = joblib.load("model/xgb_final.sav")
+model = joblib.load("model/rf_final.sav")
 scaler=joblib.load("model/std_scaler.bin")
 
 #################################################
@@ -50,28 +50,16 @@ engine=db.engine
 def home():
     return render_template("index.html")
 
-@app.route("/past")
-def past():
-    return render_template("past.html")
-
-@app.route("/present")
-def present():
-    return render_template("present.html")
-
-@app.route("/future")
-def tech():
-    return render_template("future.html")
-
+# lga coordinates file
 @app.route("/lga")
 def geog():
-    with open('./static/data/LGA.csv') as csv_file:
+    with open('./static/assets/data/LGA.csv') as csv_file:
         data=csv_file.read()
     return data
 
-@app.route('/predict',methods=['POST'])
-def predict():
-    proptype = request.form['type']
-    sub = request.form['suburb']
+# ML prediction model
+@app.route('/predict/<sub>/<proptype>/<beds>/<bath>/<car>')
+def predict(sub,proptype,beds,bath,car):
     s1=text("SELECT \
         AVG(l.latitude),\
         AVG(l.longitude)\
@@ -87,75 +75,49 @@ def predict():
         JOIN lga\
         ON lga.lga=s.lga\
         JOIN offence_rate AS o\
-        ON o.lga=s.lga\
+        ON o.lga=lga.lga\
         WHERE o.year=2020\
-        AND l.year=2020\
-        AND lower(s.suburb)=:r\
+        AND s.suburb=:r\
         GROUP BY s.suburb,o.crime_rate")    
     with engine.begin() as conn:
-        response1=conn.execute(s1,r=sub)
-        response2=conn.execute(s2,r=sub)
+        response1=conn.execute(s1,r=sub.lower())
+        response2=conn.execute(s2,r=sub.lower())
     for r in response1:
         lat=float(r[0])
         lng=float(r[1])
     for r in response2:
         crimerate=float(r[0])
-        offence=int(r[1])
-    beds = request.form['bed']
-    bath = request.form['bath']
-    car = request.form['car']
+        offence=float(r[1])
     toorak=0
     canterbury=0
     malvern=0
     eastmelb=0
     typeapartment=0
     typehouse=0
-    if sub=="toorak":
+    if sub.lower()=="toorak":
         toorak=1
-    elif sub=="canterbury":
+    elif sub.lower()=="canterbury":
         canterbury=1
-    elif sub=="malvern":
+    elif sub.lower()=="malvern":
         malvern=1
-    elif sub=="east melbourne":
+    elif sub.lower()=="east melbourne":
         eastmelb=0
-    if proptype=="Apartment/Unit/Flat":
+    if proptype=="Apartment":
         typeapartment=1
     elif proptype=="House":
         typehouse=1
-    predict_input=np.array([toorak,canterbury,bath,malvern,eastmelb,0,typehouse,1,0,0,typeapartment,beds,2019,lng,lat,crimerate,car,3.5,offence,6]).reshape(1,-1)
+    predict_input=np.array([lat,lng,bath,toorak,2020,beds,crimerate,0,offence,3.5,0,car,typeapartment,0,6,1,typehouse,eastmelb,malvern,canterbury]).reshape(1,-1)
     predict_input_scaled=scaler.transform(predict_input)
-    prediction=model.predict(predict_input_scaled)
-    return render_template('future.html', prediction_text=prediction[0])
+    # using quantile regression forest method to get prediction interval
+    # reference = https://blog.datadive.net/prediction-intervals-for-random-forests/
+    predictions=[]
+    for r in model.estimators_:
+        predictions.append(r.predict(predict_input_scaled))
+    medianPrice=int(np.percentile(predictions,50/2.))
+    upperPrice=int(np.percentile(predictions,95/2.))
+    lowerPrice=int(np.percentile(predictions,5/2.))
+    return jsonify([{"sub":sub,"prop":proptype,"bed":beds,"bath":bath,"car":car,"med":medianPrice,"low":lowerPrice,"high":upperPrice}])
 
-# @app.route("/api/latest")
-# def latest():
-#     with open('./source/latest_listings.csv') as csv_file:
-#         data=csv.reader(csv_file,delimiter=',')
-#         first_line=True
-#         latest_listing=[]
-#         for row in data:
-#             if not first_line:
-#                 latest_listing.append({
-#                     "feature":row[1],
-#                     "type":row[2],
-#                     "bath":row[3],
-#                     "bed":row[4],
-#                     "car":row[5],
-#                     "suburb":row[6],
-#                     "postcode":row[7],
-#                     "address":row[8],
-#                     "latitude":row[9],
-#                     "longitude":row[10],
-#                     "floorplan":row[11],
-#                     "soldmethod":row[12],
-#                     "solddate":row[13],
-#                     "soldprice":row[14]
-#                 })
-#             else:
-#                 first_line=False
-#     return jsonify(latest_listing)
-
-# # create routes for various APIs
 # suburb aggregate data
 @app.route("/api/suburb/<variable>/<year>")
 def suburb_year(variable,year):
@@ -318,6 +280,35 @@ def suburb_trend(suburb):
 
     return jsonify(allData)
 
+# lga_trend for line plot
+@app.route("/api/lga/<lga>")
+def lga_trend(lga):
+    s=text("SELECT l.year,\
+        l.type,\
+        AVG(l.price)\
+        FROM listing AS l\
+        JOIN suburb AS s\
+        ON s.suburb=l.suburb\
+        JOIN lga\
+        on lga.lga=s.lga\
+        WHERE lower(lga.lga)=:r\
+        GROUP BY lga.lga,l.year,l.type\
+        ORDER BY l.year")    
+
+    with engine.begin() as conn:
+        response=conn.execute(s,r=lga)
+    
+    allData=[]
+    for r in response:
+        data={
+            "year":r[0],
+            "type":r[1],
+            "price":int(r[2])
+        }
+        allData.append(data)
+
+    return jsonify(allData)
+
 # full_trend for line plot
 @app.route("/api/trend")
 def trend():
@@ -373,4 +364,4 @@ def suburb():
 
 # run app
 if __name__ == "__main__":
-    app.run()
+    app.run(debug=True)

@@ -1,0 +1,4 @@
+username='postgres'
+password='SufjanStevens'
+client_id='client_eb87e10c062c220695a323d006f401f9'
+client_secret='secret_3da7d1f8b2f144127d96c2d54f1e9913'

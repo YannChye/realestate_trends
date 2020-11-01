@@ -1,12 +1,3 @@
-//SideNav https://www.w3schools.com/howto/howto_js_sidenav.asp
-/* Set the width of the side navigation to 250px */
-function openNav() {
-    document.getElementById("mySidenav").style.width = "250px";
-}
-/* Set the width of the side navigation to 0 */
-function closeNav() {
-    document.getElementById("mySidenav").style.width = "0";
-}
 
 // Victoria boundary polygons
 const subCoord="https://data.gov.au/geoserver/vic-suburb-locality-boundaries-psma-administrative-boundaries/wfs?request=GetFeature&typeName=ckan_af33dd8c_0534_4e18_9245_fc64440f742e&outputFormat=json"
@@ -96,17 +87,17 @@ function buildMap(coord,mapdata) {
                     onEachFeature: function onEachFeature(feature,layer) {
                         layer.on('click',function(e) { // Function to draw trend chart when region is selected
                             if (region==="suburb") {
-                                lineChart(e.sourceTarget.feature.properties.vic_loca_2.toLowerCase());
+                                lineChart(region,e.sourceTarget.feature.properties.vic_loca_2.toLowerCase(),listingType);
                             }
                             else if (region==="lga") {
-                                lineChart(e.sourceTarget.feature.properties.ABB_NAME.toLowerCase());
+                                lineChart(region,e.sourceTarget.feature.properties.ABB_NAME.toLowerCase(),listingType);
                             }
                         })
                     }
                 }).bindPopup(
                     (region==="suburb"?"<b>Suburb: </b>"+feature.properties.vic_loca_2.split(' ').map(capitalize).join(' ')+"<br>":"")+
                     "<b>LGA</b>: "+feature.properties.lga+""+"<hr>"+
-                    "<b>Average price</b> - AUD"+feature.properties.price.toLocaleString()+"<br>"+
+                    "<b>Average "+(listingType==="apartmentunitflat"?"apartment/unit/flat":listingType)+" price</b> - AUD"+feature.properties.price.toLocaleString()+"<br>"+
                     "<b>Average property</b> - "+feature.properties.bed+(feature.properties.bed===1?" bed ":" beds ")+
                     feature.properties.bath+(feature.properties.bath===1?" bath ":" baths ")+
                     feature.properties.car+(feature.properties.car===1?" car ":" cars ")+"<br>"+
@@ -124,7 +115,7 @@ function buildMap(coord,mapdata) {
         var legend=L.control({position:"bottomleft"});
         legend.onAdd=function() {
             var div=L.DomUtil.create("div","info legend");
-            var legendInfo="<strong>Price (AUD)</strong><div class=\"labels\"><div class=\"min\">200,000"
+            var legendInfo="<strong>Price (AUD)</strong><br><div class=\"labels\"><div class=\"min\">200,000"
                 +"</div><div class=\"med\">1,400,000"
                 +"</div><div class=\"max\">3,000,000"
                 +"</div></div>";
@@ -156,7 +147,7 @@ function makeYears(years) {
     }
     // set year SVG dimension
     var svgHeight=50;
-    var svgWidth=document.getElementById("leftMap").offsetWidth;
+    var svgWidth=document.getElementById("progress").offsetWidth
     // create svg container
     var svg = d3.select(".progress").append("svg")
         .attr("height", svgHeight)
@@ -176,22 +167,49 @@ function makeYears(years) {
             return (svgWidth-40)/years.length-2
         })
         .attr("height",5)
-        .attr("fill",colors[5])
+        .attr("fill","silver")
         .text((d,i) => {return years[i]})
         // when a year is selected
         .on("click",function(d) {
             let selectyear=d.path[0].innerHTML;
             d3.select(".year").text(selectyear)
-            d3.select(".progress").selectAll("rect").attr("fill",colors[5])
-            d3.select(this).attr("fill",colors[0])
+            d3.select(".progress").selectAll("rect").attr("fill","silver")
+            d3.select(this).attr("fill","grey")
+            Plotly.relayout("line",{shapes:[{ //update line chart year indicator
+                type:"line",
+                x0:selectyear,
+                y0:0,
+                x1:selectyear,
+                yref:"paper",
+                y1:1,
+                line:{
+                  color:"#3c5563",
+                  width:1.5,
+                  dash:"dot"
+                }
+              }],
+              annotations:[{
+                  x:selectyear,
+                  y:1.05,
+                  xref:'x',
+                  yref:'paper',
+                  text:"<b>"+selectyear+"<b>",
+                  showarrow:false,
+                  font:{
+                    size:12,
+                    color:"#3c5563"
+                  }
+                }]
+              })
             myMap.closePopup(); //close map popup
+            d3.select("span.year").text(selectyear);
             getData(region,listingType,selectyear)// update dashboard with selected year
             return year=selectyear;
         })
         .on("mouseover",function(d) {
             toolTip.html(`<p>${this.innerHTML}</p>`)
             .style("left",`${parseInt(d3.select(this).attr("x"))+(parseInt(d3.select(this).attr("width"))/2)}px`)
-            .style("top","20px")
+            .style("top",`${parseInt($(".progress").offset().top)-20}px`)
             .style("background","grey")
             .style("opacity",1)
             d3.select(this).attr("height",10).attr("y",0)
@@ -212,11 +230,12 @@ function makeYears(years) {
         })
         .attr("y",25)
         .attr("font-size","10px")
+        .attr("fill","silver")
         .text(d=>{return d})
     if (year=2020) { //colour year 2020 on default page
         for (var a of document.querySelectorAll("rect")) {
             if (a.textContent.includes(2020)) {
-                d3.select(a).attr("fill",colors[0]);
+                d3.select(a).attr("fill","grey");
             }
         }
     }
@@ -225,18 +244,6 @@ function makeYears(years) {
 // ToolTip for year popup
 var toolTip=d3.select(".progress").append("div")
     .attr("class","tooltip")
-
-// Colorblind mode
-function changeColor() {
-    var colorBlind = document.getElementById('customSwitches');
-    if(colorBlind.checked){
-        colors=["#2F2F83","#404181","#51527D","#63637A","747476","#868574","979670","A8A76C","B9B769"];
-    } else {
-        colors=["#05668D","#236889","#406984","#5E6B7F","#7B6C7A","#996E76","#B66F71","#D3706C","#F07167"];
-    }
-    violinColor(colors)
-    return colors
-}
 
 // Get range intervals
 function getColorStep(minVal,maxVal) {
@@ -344,8 +351,8 @@ function violinChart(year,style) {
         }]
         var layout = {
             autosize:true,
-            plot_bgcolor:'rgb(239,225,210)',
-            paper_bgcolor:'rgb(239,225,210)',
+            plot_bgcolor:'rgb(171,171,171)',
+            paper_bgcolor:'rgb(171,171,171)',
             margin:{
                 l:100,
                 r:50,
@@ -356,13 +363,13 @@ function violinChart(year,style) {
             hovermode:"closest",
             showlegend:false,
             font:{
-                family:'Montserrat,sans-serif',
+                family: "sans-serif",
                 size:8
             },
             title: {
-                "text":"<b>"+capitalize(listingType)+" Price across LGAs in "+year+"</b>",
+                "text":(listingType==="apartmentunitflat"?"Apartment":capitalize(listingType))+" Price across LGAs in "+year,
                 "font":{
-                    "size":"24px"},
+                    "size":"34px"},
 
             },
             xaxis: {
@@ -381,8 +388,8 @@ function violinColor(colors) {
         svgViolin.remove();
     }
     // set year SVG dimension
-    var svgHeight=50;
-    var svgWidth=$("#violin").width();
+    var svgHeight=30;
+    var svgWidth=0.95*$("#violin").width();
     // create svg container
     var svg = d3.select(".violincolor").append("svg")
         .attr("height", svgHeight)
@@ -401,7 +408,7 @@ function violinColor(colors) {
         .attr("width",(d,index) => {
             return (svgWidth-5)/colors.length
         })
-        .attr("height",20)
+        .attr("height",10)
         .attr("fill",(d) => {return d})
 }
 
@@ -422,39 +429,39 @@ function lineTrend() {
         var traceAll={
             x:yearsAll,
             y:priceAll,
-            hovertemplate:`<b>All properties<br>All suburbs</b>year: %{x}<br>price: AUD%{y}`,
+            hovertemplate:`<b>All properties<br>All suburbs</b><br>year: %{x}<br>price: AUD%{y}`,
             name:"",
             line:{
-                color:"black",
+                color:"#444444",
                 width:3
             }
         }
         var layout={
+            autosize:true,
+            plot_bgcolor:'rgb(171,171,171)',
+            paper_bgcolor:'rgb(171,171,171)',
             showlegend:false,
             margin:{
-                l:50,
-                r:0,
-                b:50,
+                l:100,
+                r:50,
+                b:20,
                 t:50,
                 pad:0
             },
             hovermode:"closest",
             title:{
-                "text":"<b>Property Price Trend</b>",
-                "xanchor":"right",
-                "x":1,
-                "y":0.95,
-                "yanchor":"top"
-            },
+                "text":"<b>Property Price Trend</b>"},
+            height:300,
             font:{
-                family:'Montserrat,sans-serif',
-                size:10
+                family:'sans-serif',
+                size:12
                 },
-            xaxis:{title:{
-                text:"Year",
-                standoff:5}},
+            xaxis:{automargin:true,
+                title:{
+                text:"<b>Year</b>",
+                standoff:10}},
             yaxis:{title:{
-                text:"Price (AUD)"}},
+                text:"<b>Price (AUD)</b>"}},
             shapes:[{
                 type:"line",
                 x0:year,
@@ -463,7 +470,7 @@ function lineTrend() {
                 yref:"paper",
                 y1:1,
                 line:{
-                    color:"#004d40",
+                    color:"#3c5563",
                     width:1.5,
                     dash:"dot"
                 }
@@ -471,14 +478,14 @@ function lineTrend() {
         annotations:[
           {
             x:year,
-            y:1.05,
+            y:1.1,
             xref:'x',
             yref:'paper',
             text:"<b>"+year+"<b>",
             showarrow:false,
             font:{
               size:12,
-              color:"#004d40"
+              color:"#3c5563"
             }
           }
         ]
@@ -488,12 +495,17 @@ function lineTrend() {
 }
 
 //suburb trend line chart
-function lineChart(suburb,listingType) {
+function lineChart(region,suburb,listingType) {
     try {
         Plotly.deleteTraces("line",[1,2,3])
     }
     catch (e) {}
-    let url="/api/"+suburb
+    if (region=="suburb") {
+        var url="/api/"+suburb
+    }
+    else {
+        var url="/api/lga/"+suburb
+    }
     var aggregPrice=[[],[],[]];
     var years=[[],[],[]]
     d3.json(url).then(function(data) {
@@ -515,33 +527,36 @@ function lineChart(suburb,listingType) {
       var traceApartment={
         x:years[0],
         y:aggregPrice[0],
-        hovertemplate:`<b>Apartments/Units/Flats</b><br>year: %{x}<br>price: AUD%{y}`,
+        text:Array(years[0].length).fill(capitalize(suburb)),
+        hovertemplate:`<b>Apartments/Units/Flats in %{text}</b><br>year: %{x}<br>price: AUD%{y}`,
         type:"line",
         name:"",
         line:{
-          color:(listingType==="apartmentunitflat"?colors[0]:colors[2]),
+            color:(listingType=="apartmentunitflat"?colors[8]:colors[4]),
           width:3
         }
       }
       var traceHouse={
         x:years[1],
         y:aggregPrice[1],
-        hovertemplate:`<b>House</b><br>year: %{x}<br>%{y}`,
+        text:Array(years[0].length).fill(capitalize(suburb)),
+        hovertemplate:`<b>House in %{text}</b><br>year: %{x}<br>price: AUD%{y}`,
         type:"line",
         name:"",
         line:{
-          color:(listingType==="apartmentunitflat"?colors[0]:colors[2]),
+          color:(listingType=="house"?colors[8]:colors[4]),
           width:3
         }
       }
       var traceTownhouse={
         x:years[2],
         y:aggregPrice[2],
-        hovertemplate:`<b>Townhouse</b><br>year: %{x}<br>%{y}`,
+        text:Array(years[0].length).fill(capitalize(suburb)),
+        hovertemplate:`<b>Townhouse in %{text}</b><br>year: %{x}<br>price: AUD%{y}`,
         type:"line",
         name:"",
         line:{
-          color:(listingType==="apartmentunitflat"?colors[0]:colors[2]),
+          color:(listingType=="townhouse"?colors[8]:colors[4]),
           width:3
         }
       }
@@ -553,10 +568,10 @@ function lineChart(suburb,listingType) {
 
 //starting variable
 var colors=["#05668D","#236889","#406984","#5E6B7F","#7B6C7A","#996E76","#B66F71","#D3706C","#F07167"];
-lineTrend()
 var listingType="house";
 var region="suburb";
 var year=2020
+lineTrend()
 getYears()
 getData(region,listingType,year) 
 violinColor(colors)
