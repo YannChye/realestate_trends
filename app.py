@@ -12,15 +12,15 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 import pandas as pd
 import numpy as np
-import joblib
+#mport joblib
 import json
 
 #################################################
 # Flask Setup
 #################################################
 app = Flask(__name__)
-model = joblib.load("model/rf_final.sav")
-scaler=joblib.load("model/std_scaler.bin")
+#model = joblib.load("model/rf_final.sav")
+#scaler=joblib.load("model/std_scaler.bin")
 
 #################################################
 # Database Setup
@@ -58,65 +58,81 @@ def geog():
     return data
 
 # ML prediction model
-@app.route('/predict/<sub>/<proptype>/<beds>/<bath>/<car>')
-def predict(sub,proptype,beds,bath,car):
-    s1=text("SELECT \
-        AVG(l.latitude),\
-        AVG(l.longitude)\
-        FROM listing AS l\
-        WHERE l.suburb=:r\
-        GROUP BY l.suburb")
-    s2=text("SELECT \
-        o.crime_rate,\
-        AVG(l.offence_count)\
-        FROM listing AS l\
-        JOIN suburb AS s\
-        ON s.suburb=l.suburb\
-        JOIN lga\
-        ON lga.lga=s.lga\
-        JOIN offence_rate AS o\
-        ON o.lga=lga.lga\
-        WHERE o.year=2020\
-        AND s.suburb=:r\
-        GROUP BY s.suburb,o.crime_rate")    
-    with engine.begin() as conn:
-        response1=conn.execute(s1,r=sub.lower())
-        response2=conn.execute(s2,r=sub.lower())
-    for r in response1:
-        lat=float(r[0])
-        lng=float(r[1])
-    for r in response2:
-        crimerate=float(r[0])
-        offence=float(r[1])
-    toorak=0
-    canterbury=0
-    malvern=0
-    eastmelb=0
-    typeapartment=0
-    typehouse=0
-    if sub.lower()=="toorak":
-        toorak=1
-    elif sub.lower()=="canterbury":
-        canterbury=1
-    elif sub.lower()=="malvern":
-        malvern=1
-    elif sub.lower()=="east melbourne":
-        eastmelb=0
-    if proptype=="Apartment":
-        typeapartment=1
-    elif proptype=="House":
-        typehouse=1
-    predict_input=np.array([lat,lng,bath,toorak,2020,beds,crimerate,0,offence,3.5,0,car,typeapartment,0,6,1,typehouse,eastmelb,malvern,canterbury]).reshape(1,-1)
-    predict_input_scaled=scaler.transform(predict_input)
-    # using quantile regression forest method to get prediction interval
-    # reference = https://blog.datadive.net/prediction-intervals-for-random-forests/
-    predictions=[]
-    for r in model.estimators_:
-        predictions.append(r.predict(predict_input_scaled))
-    medianPrice=int(np.percentile(predictions,50/2.))
-    upperPrice=int(np.percentile(predictions,95/2.))
-    lowerPrice=int(np.percentile(predictions,5/2.))
-    return jsonify([{"sub":sub,"prop":proptype,"bed":beds,"bath":bath,"car":car,"med":medianPrice,"low":lowerPrice,"high":upperPrice}])
+# @app.route('/predict/<sub>/<proptype>/<beds>/<bath>/<car>')
+# def predict(sub,proptype,beds,bath,car):
+#     s1=text("SELECT \
+#         AVG(l.latitude),\
+#         AVG(l.longitude)\
+#         FROM listing AS l\
+#         WHERE l.suburb=:r\
+#         GROUP BY l.suburb")
+#     s2=text("SELECT \
+#         o.crime_rate,\
+#         AVG(l.offence_count)\
+#         FROM listing AS l\
+#         JOIN suburb AS s\
+#         ON s.suburb=l.suburb\
+#         JOIN lga\
+#         ON lga.lga=s.lga\
+#         JOIN offence_rate AS o\
+#         ON o.lga=lga.lga\
+#         WHERE o.year=2020\
+#         AND s.suburb=:r\
+#         GROUP BY s.suburb,o.crime_rate")    
+#     with engine.begin() as conn:
+#         response1=conn.execute(s1,r=sub.lower())
+#         response2=conn.execute(s2,r=sub.lower())
+#     for r in response1:
+#         lat=float(r[0])
+#         lng=float(r[1])
+#     for r in response2:
+#         crimerate=float(r[0])
+#         offence=float(r[1])
+#     toorak=0
+#     canterbury=0
+#     malvern=0
+#     eastmelb=0
+#     typeapartment=0
+#     typehouse=0
+#     if sub.lower()=="toorak":
+#         toorak=1
+#     elif sub.lower()=="canterbury":
+#         canterbury=1
+#     elif sub.lower()=="malvern":
+#         malvern=1
+#     elif sub.lower()=="east melbourne":
+#         eastmelb=0
+#     if proptype=="Apartment":
+#         typeapartment=1
+#     elif proptype=="House":
+#         typehouse=1
+#     predict_input=np.array([lat,lng,bath,toorak,2020,beds,crimerate,0,offence,3.5,0,car,typeapartment,0,6,1,typehouse,eastmelb,malvern,canterbury]).reshape(1,-1)
+#     predict_input_scaled=scaler.transform(predict_input)
+#     # using quantile regression forest method to get prediction interval
+#     # reference = https://blog.datadive.net/prediction-intervals-for-random-forests/
+#     predictions=[]
+#     for r in model.estimators_:
+#         predictions.append(r.predict(predict_input_scaled))
+#     medianPrice=int(np.percentile(predictions,50/2.))
+#     upperPrice=int(np.percentile(predictions,95/2.))
+#     lowerPrice=int(np.percentile(predictions,5/2.))
+#     return jsonify([{"sub":sub,"prop":proptype,"bed":beds,"bath":bath,"car":car,"med":medianPrice,"low":lowerPrice,"high":upperPrice}])
+
+# # temp
+@app.route("/predict/<sub>/<prop>/<bed>/<bath>/<car>")
+def predict(sub,prop,bed,bath,car):
+    database=pd.read_csv('./static/assets/data/predict.csv')
+    database=database[database["suburb"]==sub.lower()]
+    database=database[database["property"]==prop]
+    database=database[database["bed"]==int(bed)]
+    database=database[database["bath"]==int(bath)]
+    database=database[database["car"]==int(car)]
+    database=database.reset_index(drop=True)
+    medPrice=database.loc[0,"medPrice"]
+    lowPrice=database.loc[0,"lowPrice"]
+    highPrice=database.loc[0,"highPrice"]
+
+    return jsonify([{"sub":sub,"prop":prop,"bed":bed,"bath":bath,"car":car,"med":int(medPrice),"low":int(lowPrice),"high":int(highPrice)}])
 
 # suburb aggregate data
 @app.route("/api/suburb/<variable>/<year>")
