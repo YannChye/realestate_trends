@@ -203,6 +203,7 @@ function makeYears(years) {
               })
             myMap.closePopup(); //close map popup
             d3.select("span.year").text(selectyear);
+            console.log(selectyear)
             getData(region,listingType,selectyear)// update dashboard with selected year
             return year=selectyear;
         })
