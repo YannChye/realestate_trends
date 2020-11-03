@@ -136,8 +136,8 @@ function getPrediction() {
       d3.select("#prediction").select("h4").text(data[0].prop+" in "+data[0].sub.split(' ').map(capitalize).join(' '))
       d3.select("#prediction").select("p").html(
         `<hr><b>${data[0].bed} bed ${data[0].bath} bath ${data[0].car} car space<br><br>
-        estimated price</b>: AUD${data[0].med}<br>
-        <b>price range</b>: AUD${data[0].low} - ${data[0].high}`)
+        estimated price</b>: AUD${data[0].med.toLocaleString()}<br>
+        <b>price range</b>: AUD${data[0].low.toLocaleString()} - ${data[0].high.toLocaleString()}`)
     })
   }
 }
