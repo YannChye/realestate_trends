@@ -101,10 +101,11 @@ function buildMap(coord,mapdata) {
                     "<b>Average property</b> - "+feature.properties.bed+(feature.properties.bed===1?" bed ":" beds ")+
                     feature.properties.bath+(feature.properties.bath===1?" bath ":" baths ")+
                     feature.properties.car+(feature.properties.car===1?" car ":" cars ")+"<br>"+
-                    Math.round(feature.properties.auction/feature.properties.count*100)+"% sold at auction<br>"+
-                    Math.round(feature.properties.auctionprior/feature.properties.count*100)+"% sold prior to auction<br>"+
-                    Math.round(feature.properties.private/feature.properties.count*100)+"% sold via private treaty<br>"+
-                    "Recorded crime per 100,000 population - "+feature.properties.offence+"<br><br>"+
+                    "<b>Auction:Prior to auction:Private Sale</b>"+
+                    Math.round(feature.properties.auction/feature.properties.count*100)+":"+
+                    Math.round(feature.properties.auctionprior/feature.properties.count*100)+":"+
+                    Math.round(feature.properties.private/feature.properties.count*100)+"%"+
+                    (region==="suburb"?"<br><br>":"<b>Recorded crime</b> - "+feature.properties.offence+"per 100,000 population<br><br>")+
                     "<i>*based on averages from "+feature.properties.count+" sold listings</i>")
                 .addTo(myMap)
             }}
@@ -115,9 +116,9 @@ function buildMap(coord,mapdata) {
         var legend=L.control({position:"bottomleft"});
         legend.onAdd=function() {
             var div=L.DomUtil.create("div","info legend");
-            var legendInfo="<strong>Price (AUD)</strong><br><div class=\"labels\"><div class=\"min\">200,000"
-                +"</div><div class=\"med\">1,400,000"
-                +"</div><div class=\"max\">3,000,000"
+            var legendInfo="<strong>Price (AUD)</strong><br><div class=\"labels\"><div class=\"min\">50,000"
+                +"</div><div class=\"med\">2,700,000"
+                +"</div><div class=\"max\">5,000,000"
                 +"</div></div>";
             div.innerHTML=legendInfo;
             var labels=[];
@@ -259,8 +260,8 @@ function chooseColor(colors,feature,num) {
         var maxVal=30000;
     }
     else if (num==2) {
-        var minVal=200000;
-        var maxVal=3000000;
+        var minVal=50000;
+        var maxVal=5500000;
     }
     var color_step=getColorStep(minVal,maxVal);
     if (feature > color_step[8]) {

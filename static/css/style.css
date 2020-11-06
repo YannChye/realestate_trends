@@ -10396,9 +10396,12 @@ body {
 }
 
 .legend .med {
-  float:center;
+  float: left;
   font-size: 10px;
-  font-weight:normal;
+  font-weight: normal;
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .legend .max,.legend-crime .max {
@@ -10511,7 +10514,7 @@ input[type=submit] {
   }
 }
 #map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-popup-pane > div > div.leaflet-popup-content-wrapper > div > hr {
-  margin:0;
-  border:0;
+  margin:10px;
+  border:1px solid darkgray;
   position:static;
 }
