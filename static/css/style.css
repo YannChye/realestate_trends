@@ -10400,8 +10400,7 @@ body {
   font-size: 10px;
   font-weight: normal;
   position: relative;
-  margin-left: auto;
-  margin-right: auto;
+  left: 25%;
 }
 
 .legend .max,.legend-crime .max {

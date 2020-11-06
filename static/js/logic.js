@@ -101,11 +101,11 @@ function buildMap(coord,mapdata) {
                     "<b>Average property</b> - "+feature.properties.bed+(feature.properties.bed===1?" bed ":" beds ")+
                     feature.properties.bath+(feature.properties.bath===1?" bath ":" baths ")+
                     feature.properties.car+(feature.properties.car===1?" car ":" cars ")+"<br>"+
-                    "<b>Auction:Prior to auction:Private Sale</b>"+
+                    "<b>Auction:before auction:private sale</b> - "+
                     Math.round(feature.properties.auction/feature.properties.count*100)+":"+
                     Math.round(feature.properties.auctionprior/feature.properties.count*100)+":"+
                     Math.round(feature.properties.private/feature.properties.count*100)+"%"+
-                    (region==="suburb"?"<br><br>":"<b>Recorded crime</b> - "+feature.properties.offence+"per 100,000 population<br><br>")+
+                    (region==="suburb"?"<br><br>":"<br><b>Recorded crime</b> - "+feature.properties.offence+" per 100,000 population<br><br>")+
                     "<i>*based on averages from "+feature.properties.count+" sold listings</i>")
                 .addTo(myMap)
             }}
