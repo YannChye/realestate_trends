@@ -502,7 +502,9 @@ function lineTrend() {
 //suburb trend line chart
 function lineChart(region,suburb,listingType) {
     try {
-        Plotly.deleteTraces("line",[1,2,3])
+        Plotly.deleteTraces("line",1)
+        Plotly.deleteTraces("line",2)
+        Plotly.deleteTraces("line",3)
     }
     catch (e) {}
     if (region=="suburb") {
