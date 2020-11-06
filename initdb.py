@@ -9,7 +9,7 @@ from sqlalchemy_utils import database_exists, create_database
 ## IF RUNNING ON HEROKU, run the following line to create engine
 ## replace 'heroku_postgres_uri' with heroku's postgres uri
 ########################################################
-engine = create_engine('postgres://aabimjxwsxooro:9d447408214649b1596e0f42c0ea7cec6aacd30914c6b5aa68ecd659a629ef3b@ec2-52-3-4-232.compute-1.amazonaws.com:5432/d9l95bn4joj6nj')
+engine = create_engine('postgres://tkhwcvrgxzgzuk:c2e09a3235cb65786b2666df27ca0365e2e6aa8ece8edebab1a825a0a5ee4415@ec2-54-152-175-141.compute-1.amazonaws.com:5432/d7oab6h28tvmb4')
 
 ########################################################
 

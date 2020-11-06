@@ -1,6 +1,5 @@
 year,lga,crime_rate
 2011,Banyule,5343
-2011,Bass Coast,6721
 2011,Baw Baw,4489
 2011,Bayside,3428
 2011,Boroondara,3469
@@ -21,10 +20,8 @@ year,lga,crime_rate
 2011,Maroondah,5574
 2011,Melbourne,29537
 2011,Melton,5837
-2011,Mitchell,8107
 2011,Monash,4446
 2011,Moonee Valley,6371
-2011,Moorabool,4509
 2011,Moreland,6759
 2011,Murrindindi,4349
 2011,Nillumbik,3005
@@ -57,7 +54,6 @@ year,lga,crime_rate
 2012,Maroondah,6053
 2012,Melbourne,29396
 2012,Melton,6978
-2012,Mitchell,6571
 2012,Monash,4526
 2012,Moonee Valley,6867
 2012,Moorabool,4910
@@ -173,7 +169,6 @@ year,lga,crime_rate
 2015,Murrindindi,4628
 2015,Nillumbik,3517
 2015,Port Phillip,11265
-2015,South Gippsland,4277
 2015,Stonnington,9068
 2015,Whitehorse,4500
 2015,Whittlesea,6599
@@ -318,7 +313,6 @@ year,lga,crime_rate
 2019,Murrindindi,5065
 2019,Nillumbik,3301
 2019,Port Phillip,10676
-2019,South Gippsland,5291
 2019,Stonnington,8943
 2019,Whitehorse,4798
 2019,Whittlesea,6966
@@ -355,7 +349,6 @@ year,lga,crime_rate
 2020,Murrindindi,5716
 2020,Nillumbik,3476
 2020,Port Phillip,11116
-2020,South Gippsland,5541
 2020,Stonnington,10227
 2020,Whitehorse,5193
 2020,Whittlesea,6986

@@ -10271,7 +10271,7 @@ body {
 }
 
 .past-section {
-  padding-top: 5rem;
+  padding-top: 3rem;
   padding-bottom: 5rem;
   background: linear-gradient(to bottom, #000000 0%, rgba(0, 0, 0, 0.9) 75%, rgba(0, 0, 0, 0.8) 100%);
   color: rgba(255, 255, 255, 0.5)
@@ -10509,4 +10509,9 @@ input[type=submit] {
     position:relative;
     top: 5rem
   }
+}
+#map > div.leaflet-pane.leaflet-map-pane > div.leaflet-pane.leaflet-popup-pane > div > div.leaflet-popup-content-wrapper > div > hr {
+  margin:0;
+  border:0;
+  position:static;
 }

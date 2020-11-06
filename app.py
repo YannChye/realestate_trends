@@ -12,7 +12,6 @@ from sqlalchemy import create_engine
 from sqlalchemy.sql import text
 import pandas as pd
 import numpy as np
-#mport joblib
 import json
 
 #################################################
@@ -57,68 +56,7 @@ def geog():
         data=csv_file.read()
     return data
 
-# ML prediction model
-# @app.route('/predict/<sub>/<proptype>/<beds>/<bath>/<car>')
-# def predict(sub,proptype,beds,bath,car):
-#     s1=text("SELECT \
-#         AVG(l.latitude),\
-#         AVG(l.longitude)\
-#         FROM listing AS l\
-#         WHERE l.suburb=:r\
-#         GROUP BY l.suburb")
-#     s2=text("SELECT \
-#         o.crime_rate,\
-#         AVG(l.offence_count)\
-#         FROM listing AS l\
-#         JOIN suburb AS s\
-#         ON s.suburb=l.suburb\
-#         JOIN lga\
-#         ON lga.lga=s.lga\
-#         JOIN offence_rate AS o\
-#         ON o.lga=lga.lga\
-#         WHERE o.year=2020\
-#         AND s.suburb=:r\
-#         GROUP BY s.suburb,o.crime_rate")    
-#     with engine.begin() as conn:
-#         response1=conn.execute(s1,r=sub.lower())
-#         response2=conn.execute(s2,r=sub.lower())
-#     for r in response1:
-#         lat=float(r[0])
-#         lng=float(r[1])
-#     for r in response2:
-#         crimerate=float(r[0])
-#         offence=float(r[1])
-#     toorak=0
-#     canterbury=0
-#     malvern=0
-#     eastmelb=0
-#     typeapartment=0
-#     typehouse=0
-#     if sub.lower()=="toorak":
-#         toorak=1
-#     elif sub.lower()=="canterbury":
-#         canterbury=1
-#     elif sub.lower()=="malvern":
-#         malvern=1
-#     elif sub.lower()=="east melbourne":
-#         eastmelb=0
-#     if proptype=="Apartment":
-#         typeapartment=1
-#     elif proptype=="House":
-#         typehouse=1
-#     predict_input=np.array([lat,lng,bath,toorak,2020,beds,crimerate,0,offence,3.5,0,car,typeapartment,0,6,1,typehouse,eastmelb,malvern,canterbury]).reshape(1,-1)
-#     predict_input_scaled=scaler.transform(predict_input)
-#     # using quantile regression forest method to get prediction interval
-#     # reference = https://blog.datadive.net/prediction-intervals-for-random-forests/
-#     predictions=[]
-#     for r in model.estimators_:
-#         predictions.append(r.predict(predict_input_scaled))
-#     medianPrice=int(np.percentile(predictions,50/2.))
-#     upperPrice=int(np.percentile(predictions,95/2.))
-#     lowerPrice=int(np.percentile(predictions,5/2.))
-#     return jsonify([{"sub":sub,"prop":proptype,"bed":beds,"bath":bath,"car":car,"med":medianPrice,"low":lowerPrice,"high":upperPrice}])
-
-# # temp
+# ml_model
 @app.route("/predict/<sub>/<prop>/<bed>/<bath>/<car>")
 def predict(sub,prop,bed,bath,car):
     database=pd.read_csv('./static/assets/data/predict.csv')
@@ -233,21 +171,19 @@ def lga_year(variable,year):
 @app.route("/api/lga_price/<variable>/<year>")
 def lga_price(variable,year):
     listing=pd.read_csv("./source/clean/listings_all_clean.csv")
-    listing["SoldDate"]=pd.to_datetime(listing["SoldDate"],infer_datetime_format=True)  
-    listing["SoldYear"]=listing["SoldDate"].dt.year
-    listing=listing[listing["SoldYear"]==int(year)]
+    listing=listing[listing["Year"]==int(year)]
     listing=listing[listing["Type"].str.lower()==variable]
     # sort by median house price across lgas and get index
-    sorted_list=listing.groupby("lga")["SoldPrice"].median().sort_values().index
+    sorted_list=listing.groupby("Local Government Area")["SoldPrice"].median().sort_values().index
     index_map = {v:i for i,v in enumerate(sorted_list)}
     
     allData=[]
     for ind,row in listing.iterrows():
         data={
-            "lga":row["lga"],
+            "lga":row["Local Government Area"],
             "price":round(row["SoldPrice"]),
-            "crime_rate":round(row["crime_rate_lga"]),
-            "median_ind":round(index_map[row["lga"]])
+            "crime_rate":round(row["Rate per 100,000 population"]),
+            "median_ind":round(index_map[row["Local Government Area"]])
         }
         allData.append(data)
     newData=sorted(allData,key=lambda k: k['median_ind'],reverse=True)

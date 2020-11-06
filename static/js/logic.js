@@ -230,7 +230,7 @@ function makeYears(years) {
         })
         .attr("y",25)
         .attr("font-size","10px")
-        .attr("fill","silver")
+        .attr("fill",colors[4])
         .text(d=>{return d})
     if (year=2020) { //colour year 2020 on default page
         for (var a of document.querySelectorAll("rect")) {
@@ -362,6 +362,7 @@ function violinChart(year,style) {
             },
             hovermode:"closest",
             showlegend:false,
+            violingap: 2,
             font:{
                 family: "sans-serif",
                 size:8
@@ -375,6 +376,9 @@ function violinChart(year,style) {
             xaxis: {
                 zeroline: false,
                 range: [0,5000000]
+            },
+            yaxis: {
+                dtick: 1
             }
         }
         Plotly.newPlot("violin",data,layout)
@@ -432,7 +436,7 @@ function lineTrend() {
             hovertemplate:`<b>All properties<br>All suburbs</b><br>year: %{x}<br>price: AUD%{y}`,
             name:"",
             line:{
-                color:"#444444",
+                color:"#a6a1a1",
                 width:3
             }
         }
@@ -532,7 +536,7 @@ function lineChart(region,suburb,listingType) {
         type:"line",
         name:"",
         line:{
-            color:(listingType=="apartmentunitflat"?colors[8]:colors[4]),
+            color:(listingType=="apartmentunitflat"?colors[5]:colors[4]),
           width:3
         }
       }
@@ -544,7 +548,7 @@ function lineChart(region,suburb,listingType) {
         type:"line",
         name:"",
         line:{
-          color:(listingType=="house"?colors[8]:colors[4]),
+          color:(listingType=="house"?colors[5]:colors[4]),
           width:3
         }
       }
@@ -556,7 +560,7 @@ function lineChart(region,suburb,listingType) {
         type:"line",
         name:"",
         line:{
-          color:(listingType=="townhouse"?colors[8]:colors[4]),
+          color:(listingType=="townhouse"?colors[5]:colors[4]),
           width:3
         }
       }
