@@ -505,6 +505,9 @@ function lineChart(region,suburb,listingType) {
         Plotly.deleteTraces("line",1)
         Plotly.deleteTraces("line",1)
         Plotly.deleteTraces("line",1)
+        Plotly.deleteTraces("line",1)
+        Plotly.deleteTraces("line",1)
+        Plotly.deleteTraces("line",1)
     }
     catch (e) {}
     if (region=="suburb") {
